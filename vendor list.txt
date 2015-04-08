@@ -1,0 +1,17 @@
+steam (there probably is an api to get price data)
+amazon (there is an api, but it uses xml)
+gameplanet (no api, will have to use html scrubber)
+	-> https://uk.gamesplanet.com/search?utf8=%E2%9C%93&query=far+cry
+	-> this will bring up search results for "far cry"
+
+bestbuy
+	-> https://developer.bestbuy.com/documentation/products-api
+
+
+this is a game database api
+	-> http://thegamesdb.net/api/GetGamesList.php?name=halo
+
+wallmart api
+	-> https://developer.walmartlabs.com/docs
+
+

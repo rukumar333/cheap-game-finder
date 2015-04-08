@@ -1,0 +1,9 @@
+Alex:
+	-will be setting up the database the sqlite
+	-looking at xml haskell parsing
+Rushil:
+	-Will be developing front end interface
+	-bootstrap/css/etc....
+Jon:
+	-will be looking at the other apis
+	-possibly tagsoup for gameplanet

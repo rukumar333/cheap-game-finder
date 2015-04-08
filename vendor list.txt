@@ -7,11 +7,10 @@ gameplanet (no api, will have to use html scrubber)
 bestbuy
 	-> https://developer.bestbuy.com/documentation/products-api
 
-
-this is a game database api
-	-> http://thegamesdb.net/api/GetGamesList.php?name=halo
-
 wallmart api
 	-> https://developer.walmartlabs.com/docs
+
+database for games
+	-> http://wiki.thegamesdb.net/index.php?title=API_Introduction
 
 

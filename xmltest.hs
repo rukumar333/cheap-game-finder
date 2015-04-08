@@ -4,10 +4,13 @@
 
 --this is code from the wiki
 {-# LANGUAGE Arrows, NoMonomorphismRestriction #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 
 import Text.XML.HXT.Core
-
+import Control.Applicative
+import Network.Curl
+import Data.Functor
 
 data Game = Game {
 		gameId :: String,
@@ -15,14 +18,6 @@ data Game = Game {
 		releaseYear :: String,
 		platform :: String
 		} deriving (Show)
-
-
-getGame' = deep (isElem >>> hasName "Game") >>> proc x -> do
-			id' <- getText <<< getChildren <<< deep (hasName "id") -< x
-			title <- getText <<< getChildren <<< deep (hasName "GameTitle") -< x
-			year <- getText <<< getChildren <<< deep (hasName "ReleaseDate") -< x
-			platform' <- getText <<< getChildren <<< deep (hasName "Platform") -< x 
-			returnA -< Game {gameId = id', gameTitle = title, releaseYear = year, platform = platform'}
 
 
 atTag tag = deep (isElem >>> hasName tag)
@@ -38,6 +33,11 @@ getGame = atTag "Game" >>>
 		returnA -< Game {gameId = gameId', gameTitle = gameTitle', releaseYear = releaseYear', platform = platform'}
 
 main = do
+  putStrLn "Enter a search term"
+  x <- getLine
+  response <- snd <$> curlGetString ("http://thegamesdb.net/api/GetGamesList.php?name=" ++ x) []
+  writeFile "text.xml" response
   guests <- runX (readDocument [withValidate no] "text.xml" 
                     >>> getGame)
+  
   print guests

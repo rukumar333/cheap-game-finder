@@ -1,0 +1,17 @@
+.background{
+    background-image: url("../res/background.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100%;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    opacity: 0.9;
+    z-index: -1;
+}
+
+#vcenter{
+    padding-top: 25%;
+}

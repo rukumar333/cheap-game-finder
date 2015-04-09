@@ -3,50 +3,60 @@
 <Data>
 <baseImgUrl>http://thegamesdb.net/banners/</baseImgUrl>
 <Game>
-<id>2</id>
-<GameTitle>Crysis</GameTitle>
+<id>1</id>
+<GameTitle>Halo: Combat Evolved</GameTitle>
 <PlatformId>1</PlatformId>
 <Platform>PC</Platform>
-<ReleaseDate>11/13/2007</ReleaseDate>
-<Overview>From the makers of Far Cry, Crysis offers FPS fans the best-looking, most highly-evolving gameplay, requiring the player to use adaptive tactics and total customization of weapons and armor to survive in dynamic, hostile environments including Zero-G. 
-
-Earth, 2019. A team of US scientists makes a frightening discovery on an island in the South China Sea. All contact with the team is lost when the North Korean Government quickly seals off the area. The United States responds by dispatching an elite team of Delta Force Operators to recon the situation. As tension rises between the two nations, a massive alien ship reveals itself in the middle of the island. The ship generates an immense force sphere that freezes a vast portion of the island and drastically alters the global weather system. Now the US and North Korea must join forces to battle the alien menace. With hope rapidly fading, you must fight epic battles through tropical jungle, frozen landscapes, and finally into the heart of the alien ship itself for the ultimate Zero G showdown.</Overview>
-<ESRB>M - Mature</ESRB>
+<ReleaseDate>11/15/2001</ReleaseDate>
+<Overview>In Halo's twenty-sixth century setting, the player assumes the role of the Master Chief, a cybernetically enhanced super-soldier. The player is accompanied by Cortana, an artificial intelligence who occupies the Master Chief's neural interface. Players battle various aliens on foot and in vehicles as they attempt to uncover the secrets of the eponymous Halo, a ring-shaped artificial planet.</Overview>
+<ESRB>T - Teen</ESRB>
 <Genres><genre>Shooter</genre></Genres><Players>4+</Players><Co-op>No</Co-op>
-<Youtube>http://www.youtube.com/watch?v=i3vO01xQ-DM</Youtube>
-<Publisher>Electronic Arts</Publisher>
-<Developer>Crytek</Developer>
-<Rating>7.4167</Rating><Images>
+<Youtube>http://www.youtube.com/watch?v=dR3Hm8scbEw</Youtube>
+<Publisher>Microsoft Game Studios</Publisher>
+<Developer>Bungie</Developer>
+<Rating>6.625</Rating><Images>
 <fanart>
-<original width="1920" height="1080">fanart/original/2-1.jpg</original>
-<thumb>fanart/thumb/2-1.jpg</thumb>
+<original width="1920" height="1080">fanart/original/1-1.jpg</original>
+<thumb>fanart/thumb/1-1.jpg</thumb>
 </fanart>
 <fanart>
-<original width="1920" height="1080">fanart/original/2-2.jpg</original>
-<thumb>fanart/thumb/2-2.jpg</thumb>
+<original width="1920" height="1080">fanart/original/1-2.jpg</original>
+<thumb>fanart/thumb/1-2.jpg</thumb>
 </fanart>
 <fanart>
-<original width="1920" height="1080">fanart/original/2-3.jpg</original>
-<thumb>fanart/thumb/2-3.jpg</thumb>
+<original width="1920" height="1080">fanart/original/1-3.jpg</original>
+<thumb>fanart/thumb/1-3.jpg</thumb>
 </fanart>
 <fanart>
-<original width="1920" height="1080">fanart/original/2-4.jpg</original>
-<thumb>fanart/thumb/2-4.jpg</thumb>
+<original width="1920" height="1080">fanart/original/1-4.jpg</original>
+<thumb>fanart/thumb/1-4.jpg</thumb>
 </fanart>
 <fanart>
-<original width="1920" height="1080">fanart/original/2-5.jpg</original>
-<thumb>fanart/thumb/2-5.jpg</thumb>
+<original width="1920" height="1080">fanart/original/1-5.jpg</original>
+<thumb>fanart/thumb/1-5.jpg</thumb>
 </fanart>
 <fanart>
-<original width="1920" height="1080">fanart/original/2-6.jpg</original>
-<thumb>fanart/thumb/2-6.jpg</thumb>
+<original width="1920" height="1080">fanart/original/1-6.jpg</original>
+<thumb>fanart/thumb/1-6.jpg</thumb>
 </fanart>
-<boxart side="back" width="1525" height="2162" thumb="boxart/thumb/original/back/2-1.jpg">boxart/original/back/2-1.jpg</boxart>
-<boxart side="front" width="1525" height="2160" thumb="boxart/thumb/original/front/2-1.jpg">boxart/original/front/2-1.jpg</boxart>
-<banner width="760" height="140">graphical/2-g2.jpg</banner><banner width="760" height="140">graphical/2-g3.jpg</banner><screenshot>
-<original width="1920" height="1080">screenshots/2-1.jpg</original>
-<thumb>screenshots/thumb/2-1.jpg</thumb>
+<fanart>
+<original width="1920" height="1080">fanart/original/1-7.jpg</original>
+<thumb>fanart/thumb/1-7.jpg</thumb>
+</fanart>
+<boxart side="back" width="1527" height="2156" thumb="boxart/thumb/original/back/1-1.jpg">boxart/original/back/1-1.jpg</boxart>
+<boxart side="front" width="1529" height="2156" thumb="boxart/thumb/original/front/1-1.jpg">boxart/original/front/1-1.jpg</boxart>
+<banner width="760" height="140">graphical/1-g.jpg</banner><screenshot>
+<original width="800" height="600">screenshots/1-1.jpg</original>
+<thumb>screenshots/thumb/1-1.jpg</thumb>
 </screenshot>
-<clearlogo width="400" height="100">clearlogo/2.png</clearlogo></Images>
+<screenshot>
+<original width="800" height="600">screenshots/1-2.jpg</original>
+<thumb>screenshots/thumb/1-2.jpg</thumb>
+</screenshot>
+<screenshot>
+<original width="1024" height="768">screenshots/1-3.jpg</original>
+<thumb>screenshots/thumb/1-3.jpg</thumb>
+</screenshot>
+</Images>
 </Game>
 </Data>

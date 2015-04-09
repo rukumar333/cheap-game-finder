@@ -12,6 +12,7 @@ import Control.Applicative
 import Network.Curl
 import Data.Functor
 import Control.Monad
+import Data.Maybe
 
 data Game = Game {
 		gameId :: Int,
@@ -54,8 +55,15 @@ getBaseUrl = atTag "Data" >>>
 	proc x -> do
 		url <- text <<< atTag "baseImgUrl" -< x
 		returnA -< url
-		
 
+-- just a helper function to make creating a Game type easier
+makeGame :: [[String]] -> String -> Maybe Game
+makeGame [] _ = Nothing
+makeGame _ [] = Nothing
+makeGame ([a:b:c:d:e:_]) artUrl 	= Just $ Game (read a::Int) b c d (e ++ artUrl)
+      
+
+		
 main = do
   putStrLn "Enter an id"
   x <- getLine
@@ -63,8 +71,8 @@ main = do
   writeFile "text.xml" response
   games' <- runX (parseXML "text.xml" 
                     >>> getGame)
-  let games = head games'
+
   art <- runX (parseXML "text.xml" >>> getArt)
-  let fullurl = (last $ games) ++ (last art)
-  let game = Game {gameId = ( read (games !! 0)::Int), gameTitle = (games !! 1), releaseYear = (games !! 2), platform = (games !! 3), url = fullurl}
+ 
+  let game = makeGame (games') (head art)
   print game

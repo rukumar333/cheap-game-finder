@@ -13,7 +13,7 @@ import Network.Curl
 import Data.Functor
 
 data Game = Game {
-		gameId :: String,
+		gameId :: Int,
 		gameTitle :: String,
 		releaseYear :: String,
 		platform :: String
@@ -30,7 +30,7 @@ getGame = atTag "Game" >>>
 		gameTitle' <- text <<< atTag "GameTitle" -< x
 		releaseYear' <- text <<< atTag "ReleaseDate" -< x
 		platform' <- text <<< atTag "Platform" -< x
-		returnA -< Game {gameId = gameId', gameTitle = gameTitle', releaseYear = releaseYear', platform = platform'}
+		returnA -< Game {gameId = (read gameId'::Int), gameTitle = gameTitle', releaseYear = releaseYear', platform = platform'}
 
 main = do
   putStrLn "Enter a search term"

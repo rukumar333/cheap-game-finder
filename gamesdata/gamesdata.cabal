@@ -19,6 +19,6 @@ executable gamesdata
   main-is:             Main.hs
   -- other-modules:       
   other-extensions:    Arrows, NoMonomorphismRestriction, OverloadedStrings
-  build-depends:       base >=4.6 && <4.7, transformers >=0.3 && <0.4
+  build-depends:       base >=4.6 && <4.7, transformers >=0.3 && <0.4, hxt == 9.3.1.14
   -- hs-source-dirs:      
   default-language:    Haskell2010

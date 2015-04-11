@@ -14,10 +14,6 @@ import Network.Curl
 import Data.Functor
 import Control.Monad
 import Data.Maybe
-import Control.Monad.Trans.Maybe
-import Control.Monad.Trans.Class
-
-
 
 data Game = Game {
 		gameId :: Int,
@@ -68,19 +64,16 @@ makeGame _ [] = Nothing
 makeGame ([a:b:c:d:e:_]) artUrl 	= Just $ Game (read a::Int) b c d (e ++ artUrl)
       
 
-	
-	
-
 		
-gameAtId :: Int-> IO (Maybe Game)
-gameAtId x = do
-  response <- snd <$> curlGetString ("http://thegamesdb.net/api/GetGame.php?id="++(show x)) []
+main = do
+  putStrLn "Enter an id"
+  x <- getLine
+  response <- snd <$> curlGetString ("http://thegamesdb.net/api/GetGame.php?id="++x) []
   writeFile "text.xml" response
-  
   games' <- runX (parseXML "text.xml" 
                     >>> getGame)
 
   art <- runX (parseXML "text.xml" >>> getArt)
-  let game = makeGame (games') (head art) 
-  return game
-
+ 
+  let game = makeGame (games') (head art)
+  print game

@@ -6,13 +6,12 @@ import Control.Applicative
 import Data.Functor
 import Data.Maybe
 
-
+--   sqlite3 gamelist.db "CREATE TABLE pc_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
 
 main = do
-	a <- mapM gameAtId [1..100]
-	let b = map fromJust $ filter (not. isNothing) a
-	sequence $ map addGame b
-	print $ pcFilter b
+	a <- gameAtConsole "PC"
+	sequence $ take 100 $ map addGame a
+
 
 
 
@@ -22,5 +21,4 @@ addGame game = do
    	execute conn "INSERT INTO pc_games (gameId,title,year,platform,url) VALUES (?,?,?,?,?)" (gameId game::Int, gameTitle game::String, releaseYear game::String, platform game::String, url game::String)
    	close conn
 
-pcFilter:: [Game] -> [Game]
-pcFilter games = filter (\x -> (platform x) == "PC") games
+

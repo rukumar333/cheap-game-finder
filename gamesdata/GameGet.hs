@@ -33,10 +33,10 @@ data ImgUrl = ImgUrl [String]
 atTag tag = deep (isElem >>> hasName tag)
 text = getChildren >>> getText
 
-parseXML file = readDocument [ withValidate no
-                             , withRemoveWS yes  -- throw away formating WS
-                             ] file
 
+parseXML text = readString [ withValidate no
+                             , withRemoveWS yes  -- throw away formating WS
+                             ] text
 
 
 getGame = atTag "Data" >>>
@@ -74,13 +74,11 @@ makeGame ([a:b:c:d:e:_]) artUrl 	= Just $ Game (read a::Int) b c d (e ++ artUrl)
 		
 gameAtId :: Int-> IO (Maybe Game)
 gameAtId x = do
-  response <- snd <$> curlGetString ("http://thegamesdb.net/api/GetGame.php?id="++(show x)) []
-  writeFile "text.xml" response
-  
-  games' <- runX (parseXML "text.xml" 
-                    >>> getGame)
+  response <- snd <$> curlGetString ("http://thegamesdb.net/api/GetGame.php?id="++(show x)) [] 
+  games' <- runX (parseXML response 
+                   >>> getGame)
 
-  art <- runX (parseXML "text.xml" >>> getArt)
+  art <- runX (parseXML response >>> getArt)
   let game = makeGame (games') (head art) 
   return game
 

@@ -18,8 +18,11 @@ import Data.String
 --   sqlite3 gamelist.db "CREATE TABLE wiiU_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
 main = do
 	a <- gameAtConsole "PC"
-	mapM_ (addGame (fromString "pc_games"::Query)) (take 20 a)
-	print "nothing"
+	mapM_ (addGame (fromString "pc_games"::Query)) (take 100 a)
+	print $ length a
+	
+
+
 
 
 

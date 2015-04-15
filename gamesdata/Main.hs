@@ -18,8 +18,10 @@ import Data.String
 --   sqlite3 gamelist.db "CREATE TABLE wiiU_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
 main = do
 	a <- gameAtConsole "PC"
-	mapM_ (addGame (fromString "pc_games"::Query)) (take 100 a)
-	print $ length a
+	conn <- open "gamelist.db"
+	mapM_ (addGame (fromString "pc_games"::Query) conn) a
+	close conn
+	
 	
 
 
@@ -27,11 +29,10 @@ main = do
 
 
 -- parameters Game object and table name 
-addGame :: Query -> Game -> IO ()
-addGame table game = do
-	conn <- open "gamelist.db"
-   	execute conn ("INSERT INTO " <> table <> " (gameId,title,year,platform,url) VALUES (?,?,?,?,?)") (gameId game::Int, gameTitle game::String, releaseYear game::String, platform game::String, url game::String)
-   	close conn
+
+addGame table connection game = do
+   	execute connection ("INSERT INTO " <> table <> " (gameId,title,year,platform,url) VALUES (?,?,?,?,?)") (gameId game::Int, gameTitle game::String, releaseYear game::String, platform game::String, url game::String)
+ 
 
 -- this function will clear gamelist.db if there is already information in it
 setUpDb :: IO ()

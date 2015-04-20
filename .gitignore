@@ -1,1 +1,8 @@
 *~
+*.db
+# ignore the sandbox stuff files
+website/.cabal-sandbox
+website/Setup.hs
+website/cabal.sandbox.config
+website/website.cabal
+

@@ -9,8 +9,9 @@
 #remove files and folders associated with sandboxes
 */.cabal-sandbox
 */Setup.hs
-*/.cabal.sandbox.config
+*/cabal.sandbox.config
 *.cabal
+*/dist
 
 
 

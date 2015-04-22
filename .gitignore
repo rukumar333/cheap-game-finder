@@ -10,7 +10,6 @@
 */.cabal-sandbox
 */Setup.hs
 */cabal.sandbox.config
-*.cabal
 */dist
 
 

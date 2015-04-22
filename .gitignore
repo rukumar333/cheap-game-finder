@@ -1,8 +1,16 @@
 *~
 *.db
 # ignore the sandbox stuff files
-website/.cabal-sandbox
-website/Setup.hs
-website/cabal.sandbox.config
-website/website.cabal
+#website/.cabal-sandbox
+#website/Setup.hs
+#website/cabal.sandbox.config
+#website/website.cabal
+
+#remove files and folders associated with sandboxes
+*/.cabal-sandbox
+*/Setup.hs
+*/.cabal.sandbox.config
+*.cabal
+
+
 

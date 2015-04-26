@@ -18,7 +18,8 @@ import Data.Aeson
 
 
 
-data SteamApp = SteamApp { appid :: Double, name :: String} deriving (Show)
+-- data SteamApp = SteamApp { appid :: Int, name :: String} deriving (Show)
+data SteamApp = SteamApp { name :: String} deriving (Show)
 
 data AppList = AppList { applist :: Apps} deriving (Show)
 
@@ -40,11 +41,14 @@ instance FromJSON App where
               
          
 
+-- instance FromJSON SteamApp where
+--     parseJSON (Object v) = SteamApp
+--                            <$> v .: "appid"
+--                            <*> v .: "name"
+
 instance FromJSON SteamApp where
     parseJSON (Object v) = SteamApp
-                           <$> v .: "appid"
-                           <*> v .: "name"
-
+                           <$> v .: "name"
 
 run = do
 	response <- snd <$> curlGetString "http://api.steampowered.com/ISteamApps/GetAppList/v0001/" []

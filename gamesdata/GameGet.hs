@@ -27,7 +27,7 @@ data Game = Game {
 		url :: String
 		} deriving (Show)
 
-data ImgUrl = ImgUrl {
+data  = ImgUrl {
 		frontart::String,
 		backart::String
 		} deriving (Show)
@@ -75,6 +75,7 @@ getArt = atAttr "boxart" "side" >>>
 
 
 -- just a helper function to make creating a Game type easier
+-- it should be noted that this function extracts only one element from the supplied Game list
 makeGame :: [Game] -> Maybe Game
 makeGame []  = Nothing
 makeGame g = case g of

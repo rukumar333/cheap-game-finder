@@ -1,5 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+module GamePrices where
+
 import Data.Aeson
 import Data.Functor
 import Data.Maybe
@@ -78,6 +80,18 @@ createSpaceQuery :: [String] -> String
 createSpaceQuery platform | length platform == 1 = head platform
                              | otherwise            = take (length resultString - 3) resultString
                              where resultString = foldr (\x y -> x ++ "%20" ++ y) [] platform
+
+getBestBuy name platform = do
+  query <- return $ createBestBuyQuery name platform
+  response <- snd <$> curlGetString ("http://api.remix.bestbuy.com/v1/products" ++ query ++ "?show=name,salePrice,platform,url&format=json&apiKey=xdapygd5t8dwnbbn5653h9jh") []                
+  let games = decode (fromString response)
+  return $ fromJust games
+
+getWalmart name = do
+  query <- return $ createSpaceQuery (words name)
+  response <- snd <$> curlGetString ("http://api.walmartlabs.com/v1/search?apiKey=cb6xua2avdqjj4ck26zry2jh&query=" ++ query) []
+  let games = decode (fromString response)
+  return $ fromJust games
 
 -- getBestBuyList :: String -> String -> IO ()
 -- getBestBuyList name platform = do

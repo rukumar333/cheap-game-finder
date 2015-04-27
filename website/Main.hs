@@ -14,3 +14,4 @@ main = scotty 3000 $ do
          get "/bootstrap/js/bootstrap.min.js" $ file "bootstrap/js/bootstrap.min.js"
          get "/res/background.jpg" $ file "res/background.jpg"
          get "/" $ file "./index.html"
+                     

@@ -7,10 +7,11 @@
 #website/website.cabal
 
 #remove files and folders associated with sandboxes
-*/.cabal-sandbox
-*/Setup.hs
-*/cabal.sandbox.config
-*/dist
+*.cabal
+*.cabal-sandbox
+Setup.hs
+cabal.sandbox.config
+dist/
 
 
 

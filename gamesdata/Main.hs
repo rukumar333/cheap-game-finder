@@ -9,6 +9,8 @@ import Data.Monoid
 import Data.String
 import GHC.Int
 import Data.Text
+import Data.Time.Clock
+import Data.Time.Calendar
 
 -- these commands need to be run to set up the data base
 --   sqlite3 gamelist.db "CREATE TABLE pc_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
@@ -41,12 +43,11 @@ main = do
 
 addGame table connection game = do
    	execute connection ("INSERT INTO " <> table <> " (gameId,title,year,platform,url) VALUES (?,?,?,?,?)") game
+
+
  
 
--- this function will clear gamelist.db if there is already information in it
-setUpDb :: IO ()
-setUpDb = do
-	conn <- open "gamelist.db"
-	execute conn "DELETE FROM pc_games" ()
-	close conn
+
+--removes games that are older than the specified paramater (in years)
+
 	

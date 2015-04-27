@@ -27,11 +27,6 @@ data Game = Game {
 		url :: String
 		} deriving (Show)
 
-data  = ImgUrl {
-		frontart::String,
-		backart::String
-		} deriving (Show)
-
 
 atTag tag = deep (isElem >>> hasName tag)
 atAttr tag a = deep (isElem >>> hasName tag >>> hasAttr a)

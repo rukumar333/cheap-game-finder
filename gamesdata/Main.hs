@@ -31,7 +31,9 @@ instance ToRow Game where
 main = do
 	a <- gameAtConsole "PC"
 	conn <- open "gamelist.db"
+	execute_ conn "BEGIN;"
 	mapM_ (addGame (fromString "pc_games"::Query) conn) a
+	execute_ conn "COMMIT;"
 	close conn
 	
 	

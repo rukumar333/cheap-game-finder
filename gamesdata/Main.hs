@@ -36,12 +36,19 @@ main = do
 	e <- gameAtConsole "Microsoft+Xbox+One"
 	f <- gameAtConsole "Nintendo+Wii"
 	g <- gameAtConsole "Nintendo+Wii+U"
-	print g
-	--conn <- open "gamelist.db"
-	--execute_ conn "BEGIN;"
-	--mapM_ (addGame (fromString "pc_games"::Query) conn) a
-	--execute_ conn "COMMIT;"
-	--close conn
+	
+	conn <- open "gamelist.db"
+	execute_ conn "BEGIN;"
+	mapM_ (addGame (fromString "pc_games"::Query) conn) a
+        mapM_ (addGame (fromString "ps3_games"::Query) conn) b
+        mapM_ (addGame (fromString "ps4_games"::Query) conn) c
+        mapM_ (addGame (fromString "xbox360_games"::Query) conn) d
+        mapM_ (addGame (fromString "xboxOne_games"::Query) conn) e
+        mapM_ (addGame (fromString "wii_games"::Query) conn) f
+        mapM_ (addGame (fromString "wiiU_games"::Query) conn) g
+	execute_ conn "COMMIT;"
+	close conn
+        print $ (Prelude.length a)+(Prelude.length b)+(Prelude.length c)+(Prelude.length d)+(Prelude.length e)+(Prelude.length f)+(Prelude.length g)
 	
 	
 

@@ -9,6 +9,7 @@ import Data.String
 import Network.Curl
 import Control.Monad
 import Data.Aeson
+import Data.Char (ord)
 
 --build the id database
 --sqlite3 ids.db "CREATE TABLE app_ids (id INTEGER PRIMARY KEY, appid TEXT);"
@@ -51,13 +52,17 @@ instance FromJSON SteamApp where
                            <$> v .: "name"
 
 run = do
-	response <- snd <$> curlGetString "http://api.steampowered.com/ISteamApps/GetAppList/v0001/" []
-	let apps = decode (fromString response)
+	response <- readFile "steam/steam.json"
+	let response' = filter (\x -> (ord x) <= 127) $ replace response
+	--print response'
+	let apps = decode (fromString response')
         -- let listGames = app $ applist $ app $ fromJust $ (apps :: Maybe AppList)
         let listGames = fromJust $ (apps :: Maybe AppList)
         print listGames
 	-- print "nothing"
 
+replace = map (\x -> if x=='·' then '-'; else x)
+filterBadChar = filter (\x -> (ord x) <= 127)
 
 
 

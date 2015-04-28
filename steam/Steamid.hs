@@ -82,8 +82,17 @@ populateDb = do
 --using steam/ids.db, returns the game's steam appid 
 getSteamId name = do
 	conn <- open "steam/ids.db"
-	result <- query_ conn ("SELECT * FROM ids WHERE name='" <> name <>"';") :: IO [SteamApp]
+	result <- query_ conn ("SELECT id, name FROM ids WHERE name='" <> name <>"';") :: IO [SteamApp]
 	close conn
+	return (result)
+
+
+getAppByName::String -> IO ()
+getAppByName name = do
+	game <- getSteamId (fromString name::Query)
+	print $ appid (head game)
+	
+
 
 
 

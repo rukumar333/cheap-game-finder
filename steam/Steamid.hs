@@ -79,6 +79,12 @@ populateDb = do
 	close conn
 	
 
+--using steam/ids.db, returns the game's steam appid 
+getSteamId name = do
+	conn <- open "steam/ids.db"
+	result <- query_ conn ("SELECT * FROM ids WHERE name='" <> name <>"';") :: IO [SteamApp]
+	close conn
+
 
 
 

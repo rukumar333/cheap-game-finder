@@ -57,8 +57,8 @@ main = do
 
 -- parameters Game object and table name 
 
-addGame table connection game = do
-   	execute connection ("INSERT INTO " <> table <> " (gameId,title,year,platform,url) VALUES (?,?,?,?,?)") game
+addGame table connection = do
+   	execute connection ("INSERT INTO " <> table <> " (gameId,title,year,platform,url) VALUES (?,?,?,?,?)")
 
 
  

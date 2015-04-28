@@ -20,7 +20,7 @@ import Data.Char (ord)
 
 
 -- data SteamApp = SteamApp { appid :: Int, name :: String} deriving (Show)
-data SteamApp = SteamApp { name :: String} deriving (Show)
+data SteamApp = SteamApp { appid :: Int, name :: String} deriving (Show)
 
 data AppList = AppList { applist :: Apps} deriving (Show)
 
@@ -49,20 +49,24 @@ instance FromJSON App where
 
 instance FromJSON SteamApp where
     parseJSON (Object v) = SteamApp
-                           <$> v .: "name"
+                           <$> v .: "appid"
+			   <*> v .: "name"
+
+
+extractSteamApp :: AppList -> [SteamApp]
+extractSteamApp  	=  idlist . app . applist
 
 run = do
 	response <- readFile "steam/steam.json"
-	let response' = filter (\x -> (ord x) <= 127) $ replace response
+	let response' = filter (\x -> (ord x) <= 127) $ map (\x -> if x=='·' then '-'; else x)  response
 	--print response'
 	let apps = decode (fromString response')
         -- let listGames = app $ applist $ app $ fromJust $ (apps :: Maybe AppList)
-        let listGames = fromJust $ (apps :: Maybe AppList)
+        let listGames = extractSteamApp . fromJust $ (apps :: Maybe AppList)
         print listGames
 	-- print "nothing"
 
-replace = map (\x -> if x=='·' then '-'; else x)
-filterBadChar = filter (\x -> (ord x) <= 127)
+
 
 
 

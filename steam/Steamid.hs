@@ -12,9 +12,10 @@ import Data.Aeson
 import Data.Char (ord)
 import Data.Text (pack)
 import GHC.Int
+import Text.Regex
 
 --build the id database
---sqlite3 ids.db "CREATE TABLE ids (id INTEGER PRIMARY KEY, appid TEXT, name TEXT);"
+--sqlite3 ids.db "CREATE TABLE ids (id INTEGER PRIMARY KEY, appid INTEGER, name TEXT);"
 
 --curl this to take a json list of all steam app ids
 --http://api.steampowered.com/ISteamApps/GetAppList/v0001/
@@ -60,13 +61,16 @@ extractSteamApp  	=  idlist . app . applist
 addApp connection  = do
    	execute connection ("INSERT INTO ids (appid, name) VALUES (?,?)")
 
-
+--this function filters out illegal characters from a JSON String, and formats some other stuff
+formatJSON :: String -> String
+formatJSON	= removeTM .filter (\x -> (ord x) <= 127) . map (\x -> if x=='·' then '-'; else x)
+	where removeTM json = subRegex (mkRegex "[(](TM)[)]") json ""
 
 
 
 populateDb = do
 	response <- snd <$> curlGetString ("http://api.steampowered.com/ISteamApps/GetAppList/v0001/")[]
-	let response' = filter (\x -> (ord x) <= 127) $ map (\x -> if x=='·' then '-'; else x)  response
+	let response' = formatJSON response
 	--print response'
 	let apps = decode (fromString response')
         -- let listGames = app $ applist $ app $ fromJust $ (apps :: Maybe AppList)
@@ -79,21 +83,24 @@ populateDb = do
 	close conn
 	
 
+
+
+
 --using steam/ids.db, returns the game's steam appid 
-getSteamId name = do
-	conn <- open "steam/ids.db"
-	result <- query_ conn ("SELECT id, name FROM ids WHERE name='" <> name <>"';") :: IO [SteamApp]
-	close conn
-	return (result)
-
-
+--there is currently no error handling!
 getAppByName::String -> IO ()
 getAppByName name = do
 	game <- getSteamId (fromString name::Query)
-	print $ appid (head game)
+	let id' = appid (head game)
+	response <- snd <$> curlGetString ("http://store.steampowered.com/api/appdetails?appids=" ++ (show id'))[]
+	putStrLn response
 	
 
-
+getSteamId name = do
+	conn <- open "steam/ids.db"
+	result <- query_ conn ("SELECT appid, name FROM ids WHERE name='" <> name <>"';") :: IO [SteamApp]
+	close conn
+	return (result)
 
 
 

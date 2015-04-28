@@ -63,16 +63,15 @@ addApp connection  = do
 
 
 
-
-populateDb = do
-	response <- snd <$> curlGetString ("http://api.steampowered.com/ISteamApps/GetAppList/v0001/")[]
+run = do
+	response <- readFile "steam/steam.json"
 	let response' = filter (\x -> (ord x) <= 127) $ map (\x -> if x=='·' then '-'; else x)  response
 	--print response'
 	let apps = decode (fromString response')
         -- let listGames = app $ applist $ app $ fromJust $ (apps :: Maybe AppList)
         let listGames = extractSteamApp . fromJust $ (apps :: Maybe AppList)
      	
-	conn <- open "steam/ids.db"
+	conn <- open "ids.db"
 	execute_ conn "BEGIN;"
 	mapM_ (addApp conn) listGames
 	execute_ conn "COMMIT;"

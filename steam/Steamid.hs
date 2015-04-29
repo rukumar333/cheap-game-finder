@@ -63,7 +63,7 @@ addApp connection  = do
 
 --this function filters out illegal characters from a JSON String, and formats some other stuff
 formatJSON :: String -> String
-formatJSON	= removeTM .filter (\x -> (ord x) <= 127) . map (\x -> if x=='·' then '-'; else x)
+formatJSON	= removeTM .filter (\x -> (ord x) <= 127) . map (\x -> if x=='·' then '-' else x)
 	where removeTM json = subRegex (mkRegex "[(](TM)[)]") json ""
 
 

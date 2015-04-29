@@ -1,5 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
  {-# LANGUAGE FlexibleInstances #-}
+module Steamid where
+
 import Database.SQLite.Simple
 import Control.Applicative
 import Data.Functor

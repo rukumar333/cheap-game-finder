@@ -22,9 +22,14 @@ import Text.Regex
 --curl this to take a json list of all steam app ids
 --http://api.steampowered.com/ISteamApps/GetAppList/v0001/
 
+-- curl this too
+--"http://store.steampowered.com/api/appdetails?appids="
+
 
 
 -- data SteamApp = SteamApp { appid :: Int, name :: String} deriving (Show)
+
+
 data SteamApp = SteamApp { appid :: Int, name :: String} deriving (Show)
 
 data AppList = AppList { applist :: Apps} deriving (Show)
@@ -70,6 +75,7 @@ formatJSON	= removeTM .filter (\x -> (ord x) <= 127) . map (\x -> if x=='·' the
 
 
 
+
 populateDb = do
 	response <- snd <$> curlGetString ("http://api.steampowered.com/ISteamApps/GetAppList/v0001/")[]
 	let response' = formatJSON response
@@ -90,12 +96,11 @@ populateDb = do
 
 --using steam/ids.db, returns the games json 
 --there is currently no error handling!
-getAppByName::String -> IO ()
+getAppByName::String -> IO [Int]
 getAppByName name = do
 	games <- getSteamId (fromString name::Query)
-        let idList = map appid games 
---	response <- snd <$> curlGetString ("http://store.steampowered.com/api/appdetails?appids=" ++ (show id'))[]
-	putStrLn $ show idList
+        let idList = map appid games
+        return idList
 	
 --queries the database and returns an appid
 getSteamId name = do

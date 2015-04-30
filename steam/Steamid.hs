@@ -88,19 +88,19 @@ populateDb = do
 
 
 
---using steam/ids.db, returns the game's steam appid 
+--using steam/ids.db, returns the games json 
 --there is currently no error handling!
 getAppByName::String -> IO ()
 getAppByName name = do
-	game <- getSteamId (fromString name::Query)
-	let id' = appid (head game)
-	response <- snd <$> curlGetString ("http://store.steampowered.com/api/appdetails?appids=" ++ (show id'))[]
-	putStrLn response
+	games <- getSteamId (fromString name::Query)
+        let idList = map appid games 
+--	response <- snd <$> curlGetString ("http://store.steampowered.com/api/appdetails?appids=" ++ (show id'))[]
+	putStrLn $ show idList
 	
-
+--queries the database and returns an appid
 getSteamId name = do
 	conn <- open "steam/ids.db"
-	result <- query_ conn ("SELECT appid, name FROM ids WHERE name='" <> name <>"';") :: IO [SteamApp]
+	result <- query_ conn ("SELECT appid, name FROM ids WHERE name LIKE '%" <> name <>"%';") :: IO [SteamApp]
 	close conn
 	return (result)
 

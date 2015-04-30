@@ -96,7 +96,7 @@ populateDb = do
 
 --using steam/ids.db, returns the games json 
 --there is currently no error handling!
-getAppByName::String -> IO [SteamApp]
+getAppByName::String -> IO (Maybe SteamApp)
 getAppByName name = do
 	games <- getSteamId (fromString name::Query)
         return games
@@ -104,9 +104,9 @@ getAppByName name = do
 --queries the database and returns an appid
 getSteamId name = do
 	conn <- open "Steam/ids.db"
-	result <- query_ conn ("SELECT appid, name FROM ids WHERE name LIKE '%" <> name <>"%';") :: IO [SteamApp]
+	list <- query_ conn ("SELECT appid, name FROM ids WHERE name = '" <> name <> "';") :: IO [SteamApp]
 	close conn
-	return (result)
+	if (length list) /= 1 then return Nothing else return $ Just (head list)
 
 
 

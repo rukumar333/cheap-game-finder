@@ -26,26 +26,21 @@ fromSteamApp :: S.SteamApp -> Double -> SteamGame
 fromSteamApp app price = SteamGame (S.name app) price
 
 -- use this function from the cmd line
-getGames :: String -> IO ()
-getGames name = do
-	game <- S.getAppByName name
-	games <- mapM getGameAtId game
-	let games' = (map (fromJust) . filter (isJust)) games
-	print games'
-	
+getGameByName :: String -> IO (Maybe SteamGame)
+getGameByName name = do
+	app <- S.getAppByName name
+	game <- return $ getGameFromApp <$> app
+	if isNothing game then return Nothing else fromJust game
 
 
 
-getGameAtId :: S.SteamApp -> IO (Maybe SteamGame)
-getGameAtId app = do
+getGameFromApp :: S.SteamApp -> IO (Maybe SteamGame)
+getGameFromApp app = do
 	response <- snd <$> curlGetString ("http://store.steampowered.com/api/appdetails?appids="++ (show $ S.appid app))[]
+	let name = S.name app
 	let r = matchRegex (mkRegex "(\"final\":)([0-9]+[0-9]+)") response
-	if r == Nothing
-	then return Nothing
-	else do
-		let r' = fromJust r
-		let price = (read (r' !! 1)::Double) / 100.0
-		return $ Just (SteamGame (S.name app) price)
+	let price =  (/100) <$> (fmap read (( !! 1) <$> r):: Maybe Double)
+	return $ SteamGame <$> Just name <*> price
 	
 	
 	

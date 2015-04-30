@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
  {-# LANGUAGE FlexibleInstances #-}
-module Steamid where
+module Steam.Steamid where
 
 import Database.SQLite.Simple
 import Control.Applicative
@@ -84,7 +84,7 @@ populateDb = do
         -- let listGames = app $ applist $ app $ fromJust $ (apps :: Maybe AppList)
         let listGames = extractSteamApp . fromJust $ (apps :: Maybe AppList)
      	
-	conn <- open "steam/ids.db"
+	conn <- open "Steam/ids.db"
 	execute_ conn "BEGIN;"
 	mapM_ (addApp conn) listGames
 	execute_ conn "COMMIT;"
@@ -96,15 +96,14 @@ populateDb = do
 
 --using steam/ids.db, returns the games json 
 --there is currently no error handling!
-getAppByName::String -> IO [Int]
+getAppByName::String -> IO [SteamApp]
 getAppByName name = do
 	games <- getSteamId (fromString name::Query)
-        let idList = map appid games
-        return idList
+        return games
 	
 --queries the database and returns an appid
 getSteamId name = do
-	conn <- open "steam/ids.db"
+	conn <- open "Steam/ids.db"
 	result <- query_ conn ("SELECT appid, name FROM ids WHERE name LIKE '%" <> name <>"%';") :: IO [SteamApp]
 	close conn
 	return (result)

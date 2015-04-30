@@ -22,8 +22,7 @@ import Steam.Steamid as S
 
 data SteamGame = SteamGame { name :: String, price::Double} deriving (Show)
 
-fromSteamApp :: S.SteamApp -> Double -> SteamGame
-fromSteamApp app price = SteamGame (S.name app) price
+
 
 -- use this function from the cmd line
 getGameByName :: String -> IO (Maybe SteamGame)

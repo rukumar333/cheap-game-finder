@@ -5,7 +5,7 @@
 {-# LANGUAGE Arrows, NoMonomorphismRestriction #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module GameGet where
+module Gamesdata.GameGet where
 
 import Text.XML.HXT.Core
 import Control.Applicative

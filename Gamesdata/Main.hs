@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import GameGet
+import Gamesdata.GameGet
 import Database.SQLite.Simple
 import Control.Applicative
 import Data.Functor

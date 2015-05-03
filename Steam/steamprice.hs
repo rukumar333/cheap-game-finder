@@ -31,8 +31,16 @@ getGameByName name = do
 	game <- return $ getGameFromApp <$> app
 	if isNothing game then return Nothing else fromJust game
 
+getGameBySubName :: String -> IO ()
+getGameBySubName name = do
+	conn <- open "games.db"
+	let myQuery = createQuery name
+	games <- query_ conn myQuery :: IO [SteamApp]
+	close conn
+	
+	
 
-
+--use to match a steam game by its exact name"
 getGameFromApp :: S.SteamApp -> IO (Maybe SteamGame)
 getGameFromApp app = do
 	response <- snd <$> curlGetString ("http://store.steampowered.com/api/appdetails?appids="++ (show $ S.appid app))[]
@@ -40,6 +48,18 @@ getGameFromApp app = do
 	let r = matchRegex (mkRegex "(\"final\":)([0-9]+[0-9]+)") response
 	let price =  (/100) <$> (fmap read (( !! 1) <$> r):: Maybe Double)
 	return $ SteamGame <$> Just name <*> price
+
+createQuery:: String -> Query
+createQuery n	= createQuery' $ (words . filter (\x -> not $ x `elem` ".-:–")) n
+		where createQuery' tokens = 
+			let  start 	= "SELECT appid, name FROM ids WHERE name LIKE '%" <> (fromString (head tokens)::Query) <> "%'"::Query
+			     addtoken 	= (\x -> " AND name LIKE '%" <> (fromString x::Query) <> "%'"::Query)
+			in  start <> (mconcat $ map addtoken (tail tokens)) <> ";"
+			
+	
+
+
+
 	
 	
 	

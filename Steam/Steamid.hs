@@ -84,7 +84,7 @@ populateDb = do
         -- let listGames = app $ applist $ app $ fromJust $ (apps :: Maybe AppList)
         let listGames = extractSteamApp . fromJust $ (apps :: Maybe AppList)
      	
-	conn <- open "Steam/ids.db"
+	conn <- open "games.db"
 	execute_ conn "BEGIN;"
 	mapM_ (addApp conn) listGames
 	execute_ conn "COMMIT;"
@@ -103,7 +103,7 @@ getAppByName name = do
 	
 --queries the database and returns an appid
 getSteamId name = do
-	conn <- open "Steam/ids.db"
+	conn <- open "games.db"
 	list <- query_ conn ("SELECT appid, name FROM ids WHERE name = '" <> name <> "';") :: IO [SteamApp]
 	close conn
 	if (length list) /= 1 then return Nothing else return $ Just (head list)

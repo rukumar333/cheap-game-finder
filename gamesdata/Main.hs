@@ -37,7 +37,7 @@ main = do
 	f <- gameAtConsole "Nintendo+Wii"
 	g <- gameAtConsole "Nintendo+Wii+U"
 	
-	conn <- open "gamelist.db"
+	conn <- open "games.db"
 	execute_ conn "BEGIN;"
 	mapM_ (addGame (fromString "pc_games"::Query) conn) a
         mapM_ (addGame (fromString "ps3_games"::Query) conn) b

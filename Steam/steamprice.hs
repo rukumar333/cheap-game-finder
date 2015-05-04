@@ -59,13 +59,19 @@ getGameFromApp app = do
 	return $ SteamGame <$> Just name <*> price
 
 createQuery:: String -> Query
-createQuery n	= createQuery' $ (words . filter (\x -> not $ x `elem` ".-:–")) n
+createQuery n	= createQuery' $ (isolate . filter (\x -> not $ x `elem` ".-:–")) n
 		where createQuery' tokens = 
 			let  start 	= "SELECT appid, name FROM ids WHERE name LIKE '%" <> (fromString (head tokens)::Query) <> "%'"::Query
 			     addtoken 	= (\x -> " AND name LIKE '%" <> (fromString x::Query) <> "%'"::Query)
 			in  start <> (mconcat $ map addtoken (tail tokens)) <> ";"
-			
-	
+
+--modified version of default words function		
+isolate :: String -> [String]
+isolate s = isolate' (words s)
+	where   isolate' :: [String] -> [String]
+		isolate' [] = []		
+		isolate' (x:xs) | length x == 1	= (" "++ x):isolate' xs
+			        | otherwise		= x : isolate' xs
 
 
 

@@ -60,7 +60,7 @@ main = do
 
 addGame connection = do
    	execute connection ("INSERT INTO games (gameId,title,year,platform,url) VALUES (?,?,?,?,?)")
-
+--use this function to get the box art for a game
 getUrl n platform  = do
 	conn <- open "games.db"
 	games <- query_ conn ("SELECT gameId, title, year, platform, url FROM games  WHERE title = '" <> (fromString n ::Query) <>"' AND platform = '"<> (fromString platform ::Query) <> "';") :: IO [Game]

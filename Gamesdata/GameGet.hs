@@ -55,7 +55,7 @@ getGame' console = atTag "Data" >>>
 		gameTitle' <- text <<< atTag "GameTitle" -< game
 		releaseYear' <- text <<< atTag "ReleaseDate" -< game
 		art <- text <<< atTag "thumb" -< game
-		returnA -< Game (read gameId'::Int) gameTitle' releaseYear' console ("http://thegamesdb.net/banners/" ++ art)
+		returnA -< Game (read gameId'::Int) (map (\x -> if x == '–' then '-' else x) gameTitle') releaseYear' console ("http://thegamesdb.net/banners/" ++ art)
 
 
 --used by gameAtId

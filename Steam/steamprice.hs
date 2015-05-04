@@ -13,7 +13,8 @@ import Data.Char (ord)
 import Data.Text (pack)
 import GHC.Int
 import Text.Regex
-import Steam.Steamid as S
+import Steam.Steamid as  S
+import Data.List
 
 --trim regex strings
 --(\")([0-9]+[0-9]+)(\":{\"success\":true,)
@@ -32,7 +33,6 @@ getGameByName name = do
 	if isNothing game then return Nothing else fromJust game
 
 --returns a list of steam games that contain the given substring
-getGameBySubName :: String -> IO ()
 getGameBySubName name = do
 	conn <- open "games.db"
 	execute_ conn "BEGIN;"	
@@ -43,8 +43,15 @@ getGameBySubName name = do
 	
 	games <- mapM getGameFromApp apps
 	let results = fromJust <$> filter (isJust) games
-	print results
+	return results
 	
+-- this is experimental: given a list of games, it attempts to return a game without the dlc by returning the game with the shortest name
+ignoreDLC :: [SteamGame] -> SteamGame
+ignoreDLC [x] = x
+ignoreDLC games = let names = map Main.name games
+		      minName = Prelude.minimum names
+		  in games !! fromJust (elemIndex minName names)
+		       
 
 	
 	

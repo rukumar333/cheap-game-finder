@@ -60,9 +60,9 @@ main = do
 addGame connection = do
    	execute connection ("INSERT INTO games (gameId,title,year,platform,url) VALUES (?,?,?,?,?)")
 
-getUrl n  = do
+getUrl n platform  = do
 	conn <- open "games.db"
-	games <- query_ conn ("SELECT gameId, title, year, platform, url FROM games  WHERE title = '" <> (fromString n ::Query) <>"';") :: IO [Game]
+	games <- query_ conn ("SELECT gameId, title, year, platform, url FROM games  WHERE title = '" <> (fromString n ::Query) <>"' AND platform = '"<> (fromString platform ::Query) <> "';") :: IO [Game]
         
 	print $ url $ Prelude.head games
 

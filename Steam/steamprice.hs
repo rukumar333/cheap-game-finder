@@ -48,9 +48,9 @@ getGameBySubName name = do
 -- this is experimental: given a list of games, it attempts to return a game without the dlc by returning the game with the shortest name
 ignoreDLC :: [SteamGame] -> SteamGame
 ignoreDLC [x] = x
-ignoreDLC games = let names = map Main.name games
-		      minName = Prelude.minimum names
-		  in games !! fromJust (elemIndex minName names)
+ignoreDLC games = foldr comp (head games) games
+		where comp :: SteamGame -> SteamGame -> SteamGame
+		      comp a b = if (length $ Main.name a) < (length $ Main.name b) then a else b
 		       
 
 	

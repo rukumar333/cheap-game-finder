@@ -31,12 +31,21 @@ getGameByName name = do
 	game <- return $ getGameFromApp <$> app
 	if isNothing game then return Nothing else fromJust game
 
+--returns a list of steam games that contain the given substring
 getGameBySubName :: String -> IO ()
 getGameBySubName name = do
 	conn <- open "games.db"
+	execute_ conn "BEGIN;"	
 	let myQuery = createQuery name
-	games <- query_ conn myQuery :: IO [SteamApp]
+	apps <- query_ conn myQuery :: IO [SteamApp]
+	execute_ conn "END"
 	close conn
+	
+	games <- mapM getGameFromApp apps
+	let results = fromJust <$> filter (isJust) games
+	print results
+	
+
 	
 	
 

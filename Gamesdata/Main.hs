@@ -39,13 +39,13 @@ main = do
 	
 	conn <- open "games.db"
 	execute_ conn "BEGIN;"
-	mapM_ (addGame (fromString "pc_games"::Query) conn) a
-        mapM_ (addGame (fromString "ps3_games"::Query) conn) b
-        mapM_ (addGame (fromString "ps4_games"::Query) conn) c
-        mapM_ (addGame (fromString "xbox360_games"::Query) conn) d
-        mapM_ (addGame (fromString "xboxOne_games"::Query) conn) e
-        mapM_ (addGame (fromString "wii_games"::Query) conn) f
-        mapM_ (addGame (fromString "wiiU_games"::Query) conn) g
+	mapM_ (addGame  conn) a
+        mapM_ (addGame  conn) b
+        mapM_ (addGame  conn) c
+        mapM_ (addGame  conn) d
+        mapM_ (addGame  conn) e
+        mapM_ (addGame  conn) f
+        mapM_ (addGame  conn) g
 	execute_ conn "COMMIT;"
 	close conn
         print $ (Prelude.length a)+(Prelude.length b)+(Prelude.length c)+(Prelude.length d)+(Prelude.length e)+(Prelude.length f)+(Prelude.length g)
@@ -57,12 +57,12 @@ main = do
 
 -- parameters Game object and table name 
 
-addGame table connection = do
-   	execute connection ("INSERT INTO " <> table <> " (gameId,title,year,platform,url) VALUES (?,?,?,?,?)")
+addGame connection = do
+   	execute connection ("INSERT INTO games (gameId,title,year,platform,url) VALUES (?,?,?,?,?)")
 
 getUrl n  = do
 	conn <- open "games.db"
-	games <- query_ conn ("SELECT gameId, title, year, platform, url FROM pc_games  WHERE title = '" <> (fromString n ::Query) <>"';") :: IO [Game]
+	games <- query_ conn ("SELECT gameId, title, year, platform, url FROM games  WHERE title = '" <> (fromString n ::Query) <>"';") :: IO [Game]
         
 	print $ url $ Prelude.head games
 

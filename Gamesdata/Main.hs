@@ -19,7 +19,7 @@ import Data.Time.Calendar
 --   sqlite3 gamelist.db "CREATE TABLE xbox360_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
 --   sqlite3 gamelist.db "CREATE TABLE xboxOne_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
 --   sqlite3 gamelist.db "CREATE TABLE wii_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
---   sqlite3 gamelist.db "CREATE TABLE wiiU_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
+--   sqlite3 gamelist.db "CREATE TABLE wiiU_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT);"
 
 
 instance FromRow Game where
@@ -59,6 +59,12 @@ main = do
 
 addGame table connection = do
    	execute connection ("INSERT INTO " <> table <> " (gameId,title,year,platform,url) VALUES (?,?,?,?,?)")
+
+getUrl n  = do
+	conn <- open "games.db"
+	games <- query_ conn ("SELECT gameId, title, year, platform, url FROM pc_games  WHERE title = '" <> (fromString n ::Query) <>"';") :: IO [Game]
+        
+	print $ url $ Prelude.head games
 
 
  

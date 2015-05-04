@@ -69,10 +69,10 @@ main = scotty 3000 $ do
                                                              select_ [class_ "form-control input-lg", name_ "platform"] $ do
                                                                    option_ "Platform"
                                                                    option_ "PC"
-                                                                   option_ "PS3"
-                                                                   option_ "PS4"
-                                                                   option_ "XBox 360"
-                                                                   option_ "XBox One"
+                                                                   option_ "PlayStation 3"
+                                                                   option_ "PlayStation 4"
+                                                                   option_ "Xbox 360"
+                                                                   option_ "Xbox One"
                                                                    option_ "Wii"
                                                                    option_ "Wii U"
                                                              input_ [type_ "text", class_ "form-control input-lg", placeholder_ "Ex: Skyrim", name_ "game"]

@@ -51,7 +51,15 @@ filterBestBuy :: IO BestBuyList -> D.Text ->  IO [Game]
 filterBestBuy list nm = bestBuyGameFilter (createIOBestBuyGames list) nm
 
 fixList :: IO BestBuyList -> D.Text -> IO [Game]
-fixList list nm = (map (\x -> Game (removePlatformName $ name x) (price x) (platform x) (productUrl x))) <$> (filterBestBuy list nm)
+fixList list nm = fixWindowsPlatformMap $ (map (\x -> Game (removePlatformName $ name x) (price x) (platform x) (productUrl x))) <$> (filterBestBuy list nm)
+
+fixWindowsPlatform :: Game -> Game
+fixWindowsPlatform game = Game (name game) (price game) pl (productUrl game)
+    where pl | (platform game) == "Windows" = "PC"
+             | otherwise                    = platform game
+
+fixWindowsPlatformMap :: IO [Game] -> IO [Game]
+fixWindowsPlatformMap list = (<$>) (map fixWindowsPlatform) list
 
 checkHasPlatformName :: D.Text -> Bool  
 checkHasPlatformName gn | D.isInfixOf " - PlayStation 3" gn = True 
@@ -92,10 +100,12 @@ createSpaceQuery platform | length platform == 1 = head platform
 
 
 getBestBuy name platform = do
-  query <- return $ createBestBuyQuery name platform           
+  query <- return $ createBestBuyQuery name platform'
   response <- snd <$> curlGetString ("http://api.remix.bestbuy.com/v1/products" ++ query ++ "?show=name,salePrice,platform,url&format=json&apiKey=xdapygd5t8dwnbbn5653h9jh") []                
   let games = decode (fromString response)
   fixList (return $ fromJust (games :: Maybe BestBuyList)) (D.pack name)
+                           where platform' | platform == "PC" = "windows"
+                                           | otherwise        = platform
 
 main = do
   -- Best Buy -- 

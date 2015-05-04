@@ -71,9 +71,13 @@ walmartGameToGame game = Game (name game) (price game) plat (productUrl game)
 
 fixMultiplePlatforms :: Game -> D.Text -> Game
 fixMultiplePlatforms game pl = Game (name' game) (price' game) plat (productUrl' game)
-    where plat | (platform' game) == "Xbox 360 / PS3 / PC" = pl
+    where plat | ((platform' game) == "Xbox 360 / PS3 / PC") && (D.isInfixOf (D.toLower pl) (D.toLower $ D.pack "Xbox 360 / PS3 / PC"))= fixPlatformName pl
                | otherwise                              = (platform' game)
 
+fixPlatformName :: D.Text -> D.Text
+fixPlatformName plat | D.toLower plat == "xbox 360" = D.pack "Xbox 360"
+                     | D.toLower plat == "pc" = D.pack "PC"
+                     | D.toLower plat == "playstation 3" = D.pack "PlayStation 3"
 
 filterMultiplePlatforms :: D.Text -> IO [Game] -> IO [Game]
 filterMultiplePlatforms plat list = filterPlatforms plat $ (<$>) (map (\x -> fixMultiplePlatforms x plat)) list
@@ -92,6 +96,7 @@ checkHasPlatformName gn | D.isInfixOf "(PS3)" gn = True
                         | D.isInfixOf "(Wii)" gn = True
                         | D.isInfixOf "(Wii U)" gn = True
                         | D.isInfixOf "(PC)" gn = True
+                        | D.isInfixOf "(Xbox 360 / PS3 / PC)" gn = True
                         | otherwise = False
 
 removePlatformName :: D.Text -> D.Text
@@ -102,6 +107,7 @@ removePlatformName gn | D.isInfixOf " (PS3)" gn = D.replace " (PS3)" "" gn
                       | D.isInfixOf " (Wii)" gn = D.replace " (Wii)" "" gn
                       | D.isInfixOf " (Wii U)" gn = D.replace " (Wii U)" "" gn
                       | D.isInfixOf " (PC)" gn = D.replace " (PC)" "" gn
+                      | D.isInfixOf " (Xbox 360 / PS3 / PC)" gn = D.replace " (Xbox 360 / PS3 / PC)" "" gn
                       | otherwise = gn
 
 

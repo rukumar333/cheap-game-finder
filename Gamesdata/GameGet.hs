@@ -20,12 +20,12 @@ import Control.Monad.Trans.Class
 
 
 data Game = Game {
-		gameId :: Int,
-		gameTitle :: String,
-		releaseYear :: String,
-		platform :: String,
-		url :: String
-		} deriving (Show)
+	gameId :: Int,
+	gameTitle :: String,
+	releaseYear :: String,
+	platform :: String,
+	url :: String
+	} deriving (Show)
 
 
 atTag tag = deep (isElem >>> hasName tag)
@@ -60,9 +60,9 @@ getGame' console = atTag "Data" >>>
 
 --used by gameAtId
 getArt = atAttr "boxart" "side" >>>
-	proc s -> do
-		url <- getAttrValue "thumb" -< s
-		returnA -< url
+proc s -> do
+  url <- getAttrValue "thumb" -< s
+  returnA -< url
 
 
 

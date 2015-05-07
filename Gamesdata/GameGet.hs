@@ -59,8 +59,7 @@ getGame' console = atTag "Data" >>>
 
 
 --used by gameAtId
-getArt = atAttr "boxart" "side" >>>
-proc s -> do
+getArt = atAttr "boxart" "side" >>> proc s -> do
   url <- getAttrValue "thumb" -< s
   returnA -< url
 

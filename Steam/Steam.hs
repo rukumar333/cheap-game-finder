@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
  {-# LANGUAGE FlexibleInstances #-}
+module Steam.Steam where
 import Database.SQLite.Simple
 import Control.Applicative
 import Data.Functor
@@ -50,7 +51,7 @@ ignoreDLC :: [SteamGame] -> SteamGame
 ignoreDLC [x] = x
 ignoreDLC games = foldr comp (head games) games
 		where comp :: SteamGame -> SteamGame -> SteamGame
-		      comp a b = if (length $ Main.name a) < (length $ Main.name b) then a else b
+		      comp a b = if (length $ Steam.Steam.name a) < (length $ Steam.Steam.name b) then a else b
 		       
 
 	

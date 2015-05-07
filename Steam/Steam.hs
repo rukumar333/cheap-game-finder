@@ -73,13 +73,7 @@ createQuery n	= createQuery' $ (isolate . filter (\x -> not $ x `elem` ".-:–")
 			     addtoken 	= (\x -> " AND name LIKE '%" <> (fromString x::Query) <> "%'"::Query)
 			in  start <> (mconcat $ map addtoken (tail tokens)) <> ";"
 
---modified version of default words function		
-isolate :: String -> [String]
-isolate s = isolate' (words s)
-	where   isolate' :: [String] -> [String]
-		isolate' [] = []		
-		isolate' (x:xs) | length x == 1	= (" "++ x):isolate' xs
-			        | otherwise		= x : isolate' xs
+
 
 
 

@@ -30,6 +30,13 @@ createObjectWalmart game = div_ [class_ "col-xs-1 col-md-3"] $ do
                                        div_ [class_ "website-price"] $ do
                                            p_ (fromString $ ("Walmart: $" ++ (show $ W.price' game)))
 
+walmartListToHtml :: [W.Game] -> Html ()
+walmartListToHtml []     = do
+                              div_ [] ""
+walmartListToHtml (x:xs) = do
+                              createObjectWalmart x
+                              walmartListToHtml xs
+
 createObjectBestBuy :: B.Game -> Html ()
 createObjectBestBuy game = div_ [class_ "col-xs-1 col-md-3"] $ do
                                div_ [class_ "ui-game thumbnail"] $ do
@@ -38,6 +45,13 @@ createObjectBestBuy game = div_ [class_ "col-xs-1 col-md-3"] $ do
                                        a_ [href_ (fromString $ D.unpack $ B.productUrl game)] $ h3_ (fromString $ D.unpack $ B.name game)
                                        div_ [class_ "website-price"] $ do
                                            p_ (fromString $ ("Best Buy: $" ++ (show $ B.price game)))
+
+bestBuyListToHtml :: [B.Game] -> Html ()
+bestBuyListToHtml []     = do
+                              div_ [] ""
+bestBuyListToHtml (x:xs) = do
+                              createObjectBestBuy x
+                              bestBuyListToHtml xs
 
 
 
@@ -87,8 +101,10 @@ main = scotty 3000 $ do
                                                              input_ [type_ "text", class_ "form-control input-lg", placeholder_ "Ex: Skyrim", name_ "game"]
                                                              button_ [class_ "btn btn-primary btn-lg", type_ "submit"] "Search"
                                         div_ [class_ "row"] $ do
-                                              createObjectWalmart $ head walmartList
-                                              createObjectBestBuy $ head bestBuyList
+                                              -- createObjectWalmart $ head walmartList
+                                              -- createObjectBestBuy $ head bestBuyList
+                                              walmartListToHtml walmartList
+                                              bestBuyListToHtml bestBuyList
                                              -- div_ [class_ "col-xs-1 col-md-3"] $ do
                                              --      div_ [class_ "ui-game thumbnail"] $ do
                                              --           img_ [class_ "ui-game-cover img-responsive", src_ "http://upload.wikimedia.org/wikipedia/en/8/89/Dragon_Age_Origins_cover.png"]

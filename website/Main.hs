@@ -21,28 +21,25 @@ checkWalmartBestBuy :: W.Game -> B.Game -> Bool
 checkWalmartBestBuy wm bb = ((D.isInfixOf (W.name' wm) (B.name bb)) || (D.isInfixOf (B.name bb) (W.name' wm))) && ((W.platform' wm) == (B.platform bb))
 
 
-createObjectWalmart :: Term arg result => W.Game -> arg -> result
+createObjectWalmart :: W.Game -> Html ()
 createObjectWalmart game = div_ [class_ "col-xs-1 col-md-3"] $ do
                                div_ [class_ "ui-game thumbnail"] $ do
-                                   img_ [class_ "ui-game-cover img-responsive", src_ (fromString $ D.unpack $ W.largeImage' game)]
-                                   -- div_ [class_ "caption"] $ do
-                                   --     h3_ (fromString $ D.unpack $ W.name' game)
-                                   --     div_ [class_ "website-price"] $ do
-                                   --         a_ [href_ (fromString $ D.unpack $ W.productUrl' game)] "Walmart: "
-                                   --         p_ ("$" ++ (show $ W.price' game))
+                                   img_ [class_ "ui-game-cover img-responsive", src_ $ W.largeImage' game]
+                                   div_ [class_ "caption"] $ do
+                                       a_ [href_ (fromString $ D.unpack $ W.productUrl' game)] $ h3_ (fromString $ D.unpack $ W.name' game)
+                                       div_ [class_ "website-price"] $ do
+                                           p_ (fromString $ ("Walmart: $" ++ (show $ W.price' game)))
+
+createObjectBestBuy :: B.Game -> Html ()
+createObjectBestBuy game = div_ [class_ "col-xs-1 col-md-3"] $ do
+                               div_ [class_ "ui-game thumbnail"] $ do
+                                   img_ [class_ "ui-game-cover img-responsive", src_ $ B.frontImage game]
+                                   div_ [class_ "caption"] $ do
+                                       a_ [href_ (fromString $ D.unpack $ B.productUrl game)] $ h3_ (fromString $ D.unpack $ B.name game)
+                                       div_ [class_ "website-price"] $ do
+                                           p_ (fromString $ ("Best Buy: $" ++ (show $ B.price game)))
 
 
-                                             -- div_ [class_ "col-xs-1 col-md-3"] $ do
-                                             --      div_ [class_ "ui-game thumbnail"] $ do
-                                             --           img_ [class_ "ui-game-cover img-responsive", src_ "http://upload.wikimedia.org/wikipedia/en/8/89/Dragon_Age_Origins_cover.png"]
-                                             --           div_ [class_ "caption"] $ do
-                                             --                h3_ (fromString gn)
-                                             --                div_ [class_ "website-price"] $ do
-                                             --                     a_ [href_ "#"] "Best Buy: "
-                                             --                     p_ "$60.00"
-                                             --                div_ [class_ "website-price"] $ do
-                                             --                     a_ [href_ "#"] "Walmart: "
-                                             --                     p_ "$60.00"
 
 -- main :: IO ()
 main = scotty 3000 $ do
@@ -52,24 +49,11 @@ main = scotty 3000 $ do
          get "/res/background.jpg" $ file "website/res/background.jpg"
          get "/" $ file "website/index.html"
 
-         post "/postname" $ do
-                       fn <- param "full-name"
-                       ea <- param "email-address"
-                       pn <- param "phone-number"  
-                       -- conn <- liftIO $ open "test.db"
-                       -- liftIO $ execute conn "INSERT INTO users (name, email, phone) VALUES (?,?,?)" (fn,ea,pn)
-                       -- html $ "Submitted"
-                       html . renderText $ 
-                            html_ $ 
-                                  body_ $ do
-                                    h1_ $ fromString fn
-                                    h1_ $ fromString ea
-                                    h1_ $ fromString pn
-
          post "/search" $ do
                        gn <- param "game"
                        gp <- param "platform"
                        bestBuyList <- liftIO $ B.getBestBuy gn gp                     
+                       walmartList <- liftIO $ W.getWalmart gn gp                     
                        html . renderText $
                             html_ [lang_ "en"] $ do
                                   head_ $ do
@@ -103,17 +87,19 @@ main = scotty 3000 $ do
                                                              input_ [type_ "text", class_ "form-control input-lg", placeholder_ "Ex: Skyrim", name_ "game"]
                                                              button_ [class_ "btn btn-primary btn-lg", type_ "submit"] "Search"
                                         div_ [class_ "row"] $ do
-                                             div_ [class_ "col-xs-1 col-md-3"] $ do
-                                                  div_ [class_ "ui-game thumbnail"] $ do
-                                                       img_ [class_ "ui-game-cover img-responsive", src_ "http://upload.wikimedia.org/wikipedia/en/8/89/Dragon_Age_Origins_cover.png"]
-                                                       div_ [class_ "caption"] $ do
-                                                            h3_ (fromString gn)
-                                                            div_ [class_ "website-price"] $ do
-                                                                 a_ [href_ "#"] "Best Buy: "
-                                                                 p_ "$60.00"
-                                                            div_ [class_ "website-price"] $ do
-                                                                 a_ [href_ "#"] "Walmart: "
-                                                                 p_ "$60.00"
+                                              createObjectWalmart $ head walmartList
+                                              createObjectBestBuy $ head bestBuyList
+                                             -- div_ [class_ "col-xs-1 col-md-3"] $ do
+                                             --      div_ [class_ "ui-game thumbnail"] $ do
+                                             --           img_ [class_ "ui-game-cover img-responsive", src_ "http://upload.wikimedia.org/wikipedia/en/8/89/Dragon_Age_Origins_cover.png"]
+                                             --           div_ [class_ "caption"] $ do
+                                             --                h3_ (fromString gn)
+                                             --                div_ [class_ "website-price"] $ do
+                                             --                     a_ [href_ "#"] "Best Buy: "
+                                             --                     p_ "$60.00"
+                                             --                div_ [class_ "website-price"] $ do
+                                             --                     a_ [href_ "#"] "Walmart: "
+                                             --                     p_ "$60.00"
 
                                         toHtmlRaw ("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js\"></script>" :: Text)
                                         toHtmlRaw ("<script src=\"bootstrap/js/bootstrap.min.js\"></script>" :: Text)

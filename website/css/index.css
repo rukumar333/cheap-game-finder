@@ -68,6 +68,10 @@
     color: white;
 }
 
+.caption a{
+    color: white;
+}
+
 .website-price a{
     color: white;
     font-size: 18px;

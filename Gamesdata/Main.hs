@@ -65,9 +65,15 @@ addGame connection = do
 --use this function to get the box art for a game
 getUrl n platform  = do
 	conn <- open "games.db"
-	games <- query_ conn (createQuery n platform) :: IO [Game]
-	print $ Prelude.map url games
+	games <-  query_ conn (createQuery n platform) :: IO [Game]
+	let games' = ignoreDLC games
+	return $ url games'
 
+ignoreDLC :: [Game] -> Game
+ignoreDLC [x] = x
+ignoreDLC games = Prelude.foldr comp (Prelude.head games) games
+		where comp :: Game -> Game -> Game
+		      comp a b = if (Prelude.length $ gameTitle a) < (Prelude.length $ gameTitle b) then a else b
 
 
 --creates a regex string to be used when pulling a game from the database

@@ -19,6 +19,31 @@ import qualified Prices.BestBuy as B
 
 checkWalmartBestBuy :: W.Game -> B.Game -> Bool
 checkWalmartBestBuy wm bb = ((D.isInfixOf (W.name' wm) (B.name bb)) || (D.isInfixOf (B.name bb) (W.name' wm))) && ((W.platform' wm) == (B.platform bb))
+
+
+createObjectWalmart :: Term arg result => W.Game -> arg -> result
+createObjectWalmart game = div_ [class_ "col-xs-1 col-md-3"] $ do
+                               div_ [class_ "ui-game thumbnail"] $ do
+                                   img_ [class_ "ui-game-cover img-responsive", src_ (fromString $ D.unpack $ W.largeImage' game)]
+                                   -- div_ [class_ "caption"] $ do
+                                   --     h3_ (fromString $ D.unpack $ W.name' game)
+                                   --     div_ [class_ "website-price"] $ do
+                                   --         a_ [href_ (fromString $ D.unpack $ W.productUrl' game)] "Walmart: "
+                                   --         p_ ("$" ++ (show $ W.price' game))
+
+
+                                             -- div_ [class_ "col-xs-1 col-md-3"] $ do
+                                             --      div_ [class_ "ui-game thumbnail"] $ do
+                                             --           img_ [class_ "ui-game-cover img-responsive", src_ "http://upload.wikimedia.org/wikipedia/en/8/89/Dragon_Age_Origins_cover.png"]
+                                             --           div_ [class_ "caption"] $ do
+                                             --                h3_ (fromString gn)
+                                             --                div_ [class_ "website-price"] $ do
+                                             --                     a_ [href_ "#"] "Best Buy: "
+                                             --                     p_ "$60.00"
+                                             --                div_ [class_ "website-price"] $ do
+                                             --                     a_ [href_ "#"] "Walmart: "
+                                             --                     p_ "$60.00"
+
 -- main :: IO ()
 main = scotty 3000 $ do
          get "/css/index.css" $ file "website/css/index.css"
@@ -89,6 +114,7 @@ main = scotty 3000 $ do
                                                             div_ [class_ "website-price"] $ do
                                                                  a_ [href_ "#"] "Walmart: "
                                                                  p_ "$60.00"
+
                                         toHtmlRaw ("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js\"></script>" :: Text)
                                         toHtmlRaw ("<script src=\"bootstrap/js/bootstrap.min.js\"></script>" :: Text)
 

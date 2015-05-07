@@ -22,7 +22,8 @@ data WalmartGame = WalmartGame
     {
       name :: D.Text,
       price :: Double,
-      productUrl :: D.Text
+      productUrl :: D.Text,
+      largeImage :: D.Text
     }
                    deriving(Show)
 
@@ -31,7 +32,8 @@ data Game = Game
       name' :: D.Text,
       price' :: Double,
       platform' :: D.Text,
-      productUrl' :: D.Text
+      productUrl' :: D.Text,
+      largeImage' :: D.Text
     }
                    deriving(Show)
 
@@ -44,6 +46,7 @@ instance FromJSON WalmartGame where
                            <$> v .: "name"
                            <*> v .: "salePrice"
                            <*> v .: "productUrl"                          
+                           <*> v .: "thumbnailImage"
 
 checkInputWalmart :: D.Text -> WalmartGame -> Bool
 checkInputWalmart input game = D.isInfixOf (D.toLower input) (D.toLower $ name game)
@@ -58,7 +61,7 @@ filterWalmart :: IO WalmartList -> D.Text -> IO [WalmartGame]
 filterWalmart list nm = walmartGameFilter (createIOWalmartGames list) nm
 
 walmartGameToGame :: WalmartGame -> Game
-walmartGameToGame game = Game (name game) (price game) plat (productUrl game)
+walmartGameToGame game = Game (name game) (price game) plat (productUrl game) (largeImage game)
     where plat | D.isInfixOf "(PS3)" (name game) = "PlayStation 3"
                | D.isInfixOf "(PS4)" (name game) = "PlayStation 4"
                | D.isInfixOf "(Xbox One)" (name game) = "Xbox One"
@@ -70,7 +73,7 @@ walmartGameToGame game = Game (name game) (price game) plat (productUrl game)
                | otherwise = "Error"
 
 fixMultiplePlatforms :: Game -> D.Text -> Game
-fixMultiplePlatforms game pl = Game (name' game) (price' game) plat (productUrl' game)
+fixMultiplePlatforms game pl = Game (name' game) (price' game) plat (productUrl' game) (largeImage' game)
     where plat | ((platform' game) == "Xbox 360 / PS3 / PC") && (D.isInfixOf (D.toLower pl) (D.toLower $ D.pack "Xbox 360 / PS3 / PC"))= fixPlatformName pl
                | otherwise                              = (platform' game)
 
@@ -83,7 +86,7 @@ filterMultiplePlatforms :: D.Text -> IO [Game] -> IO [Game]
 filterMultiplePlatforms plat list = filterPlatforms plat $ (<$>) (map (\x -> fixMultiplePlatforms x plat)) list
 
 fixList :: IO WalmartList -> D.Text -> D.Text -> IO [Game]
-fixList list nm pl = filterMultiplePlatforms pl $ (map (\x -> Game (removePlatformName $ name' x) (price' x) (platform' x) (productUrl' x))) <$> ((map walmartGameToGame) <$> (filterWalmart list nm))
+fixList list nm pl = filterMultiplePlatforms pl $ (map (\x -> Game (removePlatformName $ name' x) (price' x) (platform' x) (productUrl' x) (largeImage' x))) <$> ((map walmartGameToGame) <$> (filterWalmart list nm))
 
 filterPlatforms :: D.Text -> IO [Game] -> IO [Game]
 filterPlatforms pl list = (filter (\x -> (D.toLower $ platform' x) == (D.toLower pl))) <$> list

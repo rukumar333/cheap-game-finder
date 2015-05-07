@@ -22,7 +22,8 @@ data Game = Game
       name :: D.Text,
       price :: Double,
       platform :: D.Text,
-      productUrl :: D.Text
+      productUrl :: D.Text,
+      frontImage :: D.Text
     }
             deriving (Show)
 
@@ -37,6 +38,7 @@ instance FromJSON Game where
                            <*> v .: "salePrice"
                            <*> v .: "platform"
                            <*> v .: "url"
+                           <*> v .: "largeFrontImage"
 
 checkInputBestBuy :: D.Text -> Game -> Bool
 checkInputBestBuy input game = D.isInfixOf (D.toLower input) (D.toLower $ name game)
@@ -51,10 +53,10 @@ filterBestBuy :: IO BestBuyList -> D.Text ->  IO [Game]
 filterBestBuy list nm = bestBuyGameFilter (createIOBestBuyGames list) nm
 
 fixList :: IO BestBuyList -> D.Text -> IO [Game]
-fixList list nm = fixWindowsPlatformMap $ (map (\x -> Game (removePlatformName $ name x) (price x) (platform x) (productUrl x))) <$> (filterBestBuy list nm)
+fixList list nm = fixWindowsPlatformMap $ (map (\x -> Game (removePlatformName $ name x) (price x) (platform x) (productUrl x) (frontImage x))) <$> (filterBestBuy list nm)
 
 fixWindowsPlatform :: Game -> Game
-fixWindowsPlatform game = Game (name game) (price game) pl (productUrl game)
+fixWindowsPlatform game = Game (name game) (price game) pl (productUrl game) (frontImage game)
     where pl | (platform game) == "Windows" = "PC"
              | otherwise                    = platform game
 
@@ -101,7 +103,7 @@ createSpaceQuery platform | length platform == 1 = head platform
 
 getBestBuy name platform = do
   query <- return $ createBestBuyQuery name platform'
-  response <- snd <$> curlGetString ("http://api.remix.bestbuy.com/v1/products" ++ query ++ "?show=name,salePrice,platform,url&format=json&apiKey=xdapygd5t8dwnbbn5653h9jh") []                
+  response <- snd <$> curlGetString ("http://api.remix.bestbuy.com/v1/products" ++ query ++ "?show=name,salePrice,platform,url,largeFrontImage&format=json&apiKey=xdapygd5t8dwnbbn5653h9jh") []                
   let games = decode (fromString response)
   fixList (return $ fromJust (games :: Maybe BestBuyList)) (D.pack name)
                            where platform' | platform == "PC" = "windows"
@@ -112,7 +114,7 @@ main = do
   name <- getLine 
   platform <- getLine
   query <- return $ createBestBuyQuery name platform
-  response <- snd <$> curlGetString ("http://api.remix.bestbuy.com/v1/products" ++ query ++ "?show=name,salePrice,platform,url&format=json&apiKey=xdapygd5t8dwnbbn5653h9jh") []                
+  response <- snd <$> curlGetString ("http://api.remix.bestbuy.com/v1/products" ++ query ++ "?show=name,salePrice,platform,url,largeFrontImage&format=json&apiKey=xdapygd5t8dwnbbn5653h9jh") []                
   let games = decode (fromString response)
   print . products $ fromJust $ (games :: Maybe BestBuyList)
 

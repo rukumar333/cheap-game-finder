@@ -16,6 +16,7 @@ import GHC.Int
 import Text.Regex
 import Steam.Steamid as  S
 import Data.List
+import Resolve
 
 --trim regex strings
 --(\")([0-9]+[0-9]+)(\":{\"success\":true,)

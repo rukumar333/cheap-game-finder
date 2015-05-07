@@ -4,6 +4,7 @@ module Resolve where
 import Data.Metric.String
 import Data.Metric.Class as M
 import Data.Monoid
+import qualified Data.Text as D
 
 --you need this package
 --sudo apt-get install liblapack-dev
@@ -21,7 +22,6 @@ compareWords a b = let list1 = words a
         compareWords' count [] _ = count
         compareWords' count (x:xs) s | x `elem` s = compareWords' (count+1) xs s
                                      | otherwise = compareWords' count xs s
-
 
 
 

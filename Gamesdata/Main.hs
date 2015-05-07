@@ -66,7 +66,7 @@ addGame connection = do
 getUrl n platform  = do
 	conn <- open "games.db"
 	games <- query_ conn (createQuery n platform) :: IO [Game]
-	print $ url $ Prelude.head games
+	print $ Prelude.map url games
 
 
 
@@ -91,4 +91,4 @@ createQuery n platform	= createQuery' $ (isolate . Prelude.filter (\x -> not $ x
 
 
 
-	
+

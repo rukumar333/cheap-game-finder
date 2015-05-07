@@ -1,16 +1,14 @@
-
+{-# LANGUAGE OverloadedStrings #-}
+ {-# LANGUAGE FlexibleInstances #-}
+module Resolve where
 import Data.Metric.String
 import Data.Metric.Class as M
+import Data.Monoid
 
 --you need this package
 --sudo apt-get install liblapack-dev
 
-main = do
-	word1 <- getLine
-	word2 <- getLine
-	let a = Levenshtein word1
-	let b = Levenshtein word2
-	print $ M.distance a b
+
 
 
 
@@ -24,3 +22,14 @@ compareWords a b = let list1 = words a
         compareWords' count (x:xs) s | x `elem` s = compareWords' (count+1) xs s
                                      | otherwise = compareWords' count xs s
 
+
+
+
+
+--modified version of default words function		
+isolate :: String -> [String]
+isolate s = isolate' (words s)
+	where   isolate' :: [String] -> [String]
+		isolate' [] = []		
+		isolate' (x:xs) | length x == 1	= (" "++ x):isolate' xs
+			        | otherwise		= x : isolate' xs

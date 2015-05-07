@@ -12,6 +12,7 @@ import Data.Text
 import Data.Time.Clock
 import Data.Time.Calendar
 import Data.Char (ord)
+import Resolve
 
 -- these commands need to be run to set up the data base
 --   sqlite3 gamelist.db "CREATE TABLE pc_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
@@ -21,6 +22,7 @@ import Data.Char (ord)
 --   sqlite3 gamelist.db "CREATE TABLE xboxOne_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
 --   sqlite3 gamelist.db "CREATE TABLE wii_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT, price REAL);"
 --   sqlite3 gamelist.db "CREATE TABLE wiiU_games (id INTEGER PRIMARY KEY, gameId INTEGER, title TEXT, year TEXT, platform TEXT, url TEXT);"
+
 
 
 instance FromRow Game where
@@ -63,12 +65,11 @@ addGame connection = do
 --use this function to get the box art for a game
 getUrl n platform  = do
 	conn <- open "games.db"
-	games <- query_ conn ("SELECT gameId, title, year, platform, url FROM games  WHERE title = '" <> (fromString n ::Query) <>"' AND platform = '"<> (fromString platform ::Query) <> "';") :: IO [Game]
-        
+	games <- query_ conn (createQuery n platform) :: IO [Game]
 	print $ url $ Prelude.head games
 
 
- 
+
 --creates a regex string to be used when pulling a game from the database
 createDBRegex :: String -> String
 createDBRegex s = let list = Data.String.words (keepLetters s)
@@ -78,5 +79,16 @@ createDBRegex s = let list = Data.String.words (keepLetters s)
         create index size (x:xs)  | index == (size - 1) = "(" ++ x ++ ")"
                                   | otherwise = "(" ++ x ++ ").+" ++ create (index + 1) size xs
         keepLetters string =  Prelude.filter (\x -> (ord x) <= 122) string
+
+
+
+createQuery:: String -> String -> Query
+createQuery n platform	= createQuery' $ (isolate . Prelude.filter (\x -> not $ x `elem` ".-:–")) n
+		where createQuery' tokens = 
+			let  start 	= "SELECT gameId, title, year, platform, url FROM games WHERE platform = '" <> (fromString platform::Query) <> "' AND title LIKE '%" <> (fromString (Prelude.head tokens)::Query) <> "%'"::Query
+			     addtoken 	= (\x -> " AND title LIKE '%" <> (fromString x::Query) <> "%'"::Query)
+			in  start <> (mconcat $ Prelude.map addtoken (Prelude.tail tokens)) <> ";"
+
+
 
 	

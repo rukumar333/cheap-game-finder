@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Gamesdata.GamesDb where
+module Gamesdata.GamesDB where
 import Gamesdata.GameGet
 import Database.SQLite.Simple
 import Control.Applicative

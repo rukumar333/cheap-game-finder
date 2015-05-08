@@ -35,17 +35,18 @@ getGameByName name = do
 	if isNothing game then return Nothing else fromJust game
 
 --returns a list of steam games that contain the given substring
-getGameBySubName name = do
-	conn <- open "games.db"
-	execute_ conn "BEGIN;"	
-	let myQuery = createQuery name
-	apps <- query_ conn myQuery :: IO [SteamApp]
-	execute_ conn "END"
-	close conn
-	
-	games <- mapM getGameFromApp apps
-	let results = fromJust <$> filter (isJust) games
-	return results
+getGameBySubName name platform = do
+	if platform == "PC" then do	
+		conn <- open "games.db"
+		execute_ conn "BEGIN;"	
+		let myQuery = createQuery name
+		apps <- query_ conn myQuery :: IO [SteamApp]
+		execute_ conn "END"
+		close conn
+		games <- mapM getGameFromApp apps
+		let results = fromJust <$> filter (isJust) games
+		return results
+	else return []
 	
 -- this is experimental: given a list of games, it attempts to return a game without the dlc by returning the game with the shortest name
 ignoreDLC :: [SteamGame] -> SteamGame

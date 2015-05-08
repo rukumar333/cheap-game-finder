@@ -17,6 +17,7 @@ import Text.Regex
 import Steam.Steamid as  S
 import Data.List
 import Resolve
+import qualified Gamesdata.GamesDB as G
 
 --trim regex strings
 --(\")([0-9]+[0-9]+)(\":{\"success\":true,)
@@ -24,6 +25,7 @@ import Resolve
 
 
 data SteamGame = SteamGame { name :: String, price::Double} deriving (Show)
+data Game = Game {name'::String, price'::Double, image::String} deriving (Show)
 
 
 
@@ -76,7 +78,17 @@ createQuery n	= createQuery' $ (isolate . filter (\x -> not $ x `elem` ".-:–")
 			in  start <> (mconcat $ map addtoken (tail tokens)) <> ";"
 
 
+--converts steamgame to game
 
+-- fromSteamGame :: SteamGame -> String -> Game
+-- fromSteamGame s url = let a = Steam.Steam.name s
+--                           b = price s
+--                       in Game a b url
+
+fromSteamGame :: SteamGame ->  IO Game
+fromSteamGame s = do
+  imageUrl <- (G.getUrl (Steam.Steam.name s) "PC")
+  return $ Game (Steam.Steam.name s) (price s) imageUrl
 
 
 	

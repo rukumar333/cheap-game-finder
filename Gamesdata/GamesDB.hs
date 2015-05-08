@@ -66,6 +66,7 @@ addGame connection = do
 getUrl n platform  = do
 	conn <- open "games.db"
 	games <-  query_ conn (createQuery n (formatPlatform platform)) :: IO [Game]
+	close conn
 	if Prelude.null games then return ""
 	else do	
 		let games' = ignoreDLC games

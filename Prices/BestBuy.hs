@@ -100,12 +100,16 @@ createSpaceQuery platform | length platform == 1 = head platform
                              | otherwise            = take (length resultString - 3) resultString
                              where resultString = foldr (\x y -> x ++ "%20" ++ y) [] platform
 
+handleEmptyResponse games name | isJust $ (games :: Maybe BestBuyList) = fixList (return $ fromJust (games :: Maybe BestBuyList)) (D.pack name)
+                               | otherwise                             = return [] 
+
 
 getBestBuy name platform = do
   query <- return $ createBestBuyQuery name platform'
   response <- snd <$> curlGetString ("http://api.remix.bestbuy.com/v1/products" ++ query ++ "?show=name,salePrice,platform,url,largeFrontImage&format=json&apiKey=xdapygd5t8dwnbbn5653h9jh") []                
   let games = decode (fromString response)
-  fixList (return $ fromJust (games :: Maybe BestBuyList)) (D.pack name)
+  -- fixList (return $ fromJust (games :: Maybe BestBuyList)) (D.pack name)
+  handleEmptyResponse games name
                            where platform' | platform == "PC" = "windows"
                                            | otherwise        = platform
 

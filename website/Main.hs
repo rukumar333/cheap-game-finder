@@ -16,9 +16,60 @@ import Control.Monad.IO.Class
 import Data.String
 import qualified Prices.Walmart as W 
 import qualified Prices.BestBuy as B
+import qualified Steam.Steam as S
+import qualified Gamesdata.GamesDB as G
+
+data UniversalGame = UniversalGame
+    {
+      name :: D.Text,
+      price :: Double,
+      platform :: D.Text,
+      productUrl :: D.Text,
+      largeImage :: D.Text,
+      store :: D.Text
+    }
+                     deriving (Show)
+
+instance Eq UniversalGame where
+    (==) game game' = (price game) == (price game')
+
+instance Ord UniversalGame where
+    -- (<) game game' = (price game) < (price game')    
+    -- (>) game game' = (price game) > (price game')    
+    compare game game' = compare (price game) (price game')
+    
+
+walmartToUniversal :: W.Game -> IO UniversalGame
+walmartToUniversal game = return $ UniversalGame (W.name' game) (W.price' game) (W.platform' game) (W.productUrl' game) (W.largeImage' game) ("Walmart: $")
+
+bestBuyToUniversal :: B.Game -> IO UniversalGame
+bestBuyToUniversal game = return $ UniversalGame (B.name game) (B.price game) (B.platform game) (B.productUrl game) (B.frontImage game) ("Best Buy: $")
+
+steamToUniversal :: S.Game -> IO UniversalGame
+steamToUniversal game = return $ UniversalGame (D.pack $ S.name' game) (S.price' game) "PC" "" (D.pack $ S.image game) ("Steam: $")
 
 checkWalmartBestBuy :: W.Game -> B.Game -> Bool
 checkWalmartBestBuy wm bb = ((D.isInfixOf (W.name' wm) (B.name bb)) || (D.isInfixOf (B.name bb) (W.name' wm))) && ((W.platform' wm) == (B.platform bb))
+
+createObjectUniversal :: UniversalGame -> Html ()
+createObjectUniversal game = div_ [class_ "col-xs-1 col-md-3"] $ do
+                               div_ [class_ "ui-game thumbnail"] $ do
+                                   img_ [class_ "ui-game-cover img-responsive", src_ $ largeImage game]
+                                   div_ [class_ "caption"] $ do
+                                       htmlName game
+                                       div_ [class_ "website-price"] $ do
+                                           p_ (fromString $ ((D.unpack $ store game) ++ (show $ price game)))
+
+                                                             where htmlName :: UniversalGame -> Html ()   
+                                                                   htmlName gm   | (store gm) == "Steam: $" = h3_ (fromString $ D.unpack $ name gm)
+                                                                   htmlName gm   | otherwise                = a_ [href_ (fromString $ D.unpack $ productUrl gm)] $ h3_ (fromString $ D.unpack $ name gm) 
+
+universalListToHtml :: [UniversalGame] -> Html ()
+universalListToHtml []     = do
+                              div_ [] ""
+universalListToHtml (x:xs) = do
+                              createObjectUniversal x
+                              universalListToHtml xs
 
 
 createObjectWalmart :: W.Game -> Html ()
@@ -53,6 +104,26 @@ bestBuyListToHtml (x:xs) = do
                               createObjectBestBuy x
                               bestBuyListToHtml xs
 
+createObjectSteam :: S.Game -> Html ()
+createObjectSteam game = div_ [class_ "col-xs-1 col-md-3"] $ do
+                               div_ [class_ "ui-game thumbnail"] $ do
+                                   -- imageURL <- liftIO $ G.getUrl (S.name game) "PC"                            
+                                   img_ [class_ "ui-game-cover img-responsive", src_ (fromString (S.image game))]
+                                   div_ [class_ "caption"] $ do
+                                       h3_ (fromString $ S.name' game)
+                                       div_ [class_ "website-price"] $ do
+                                           p_ (fromString $ ("Steam: $" ++ (show $ S.price' game)))
+                                           -- liftIO $ print game
+
+steamListToHtml :: [S.Game] -> Html ()
+steamListToHtml []     = do
+                              div_ [] ""
+steamListToHtml (x:xs) = do
+                              createObjectSteam x
+                              -- (liftIO $ print x) :: Html ()
+                              steamListToHtml xs
+
+
 
 
 -- main :: IO ()
@@ -67,7 +138,11 @@ main = scotty 3000 $ do
                        gn <- param "game"
                        gp <- param "platform"
                        bestBuyList <- liftIO $ B.getBestBuy gn gp                     
-                       walmartList <- liftIO $ W.getWalmart gn gp                     
+                       walmartList' <- liftIO $ W.getWalmart gn gp                     
+                       steamList' <- liftIO $ S.getGameBySubName gn gp
+                       steamList <- liftIO $ mapM S.fromSteamGame steamList'
+                       walmartList <- liftIO $ mapM W.fixImages walmartList'
+                       universalList <- ((<$>) sort) $ liftIO $ liftA3 (\x y z -> x ++ y ++ z) (mapM steamToUniversal steamList) (mapM bestBuyToUniversal bestBuyList) (mapM walmartToUniversal walmartList)
                        html . renderText $
                             html_ [lang_ "en"] $ do
                                   head_ $ do
@@ -81,7 +156,7 @@ main = scotty 3000 $ do
                                         nav_ [class_ "navbar navbar-inverse"] $ do
                                              div_ [class_ "container-fluid"] $ do
                                                    div_ [class_ "navbar-header"] $ do
-                                                        a_ [class_ "navbar-brand", href_ "#"] "Cheap Game Finder"
+                                                        a_ [class_ "navbar-brand", href_ "http://localhost:3000/"] "Cheap Game Finder"
                                         div_ [class_ "background"] ""
                                         div_ [class_ "row"] $ do 
                                               div_ [id_ "wide-search-bar", class_ "text-center"] $ do
@@ -101,10 +176,7 @@ main = scotty 3000 $ do
                                                              input_ [type_ "text", class_ "form-control input-lg", placeholder_ "Ex: Skyrim", name_ "game"]
                                                              button_ [class_ "btn btn-primary btn-lg", type_ "submit"] "Search"
                                         div_ [class_ "row"] $ do
-                                              -- createObjectWalmart $ head walmartList
-                                              -- createObjectBestBuy $ head bestBuyList
-                                              walmartListToHtml walmartList
-                                              bestBuyListToHtml bestBuyList
+                                              universalListToHtml universalList
                                              -- div_ [class_ "col-xs-1 col-md-3"] $ do
                                              --      div_ [class_ "ui-game thumbnail"] $ do
                                              --           img_ [class_ "ui-game-cover img-responsive", src_ "http://upload.wikimedia.org/wikipedia/en/8/89/Dragon_Age_Origins_cover.png"]

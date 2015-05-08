@@ -7,6 +7,7 @@ import Data.Functor
 import Data.Maybe
 import Data.String
 import qualified Data.Text as D
+import qualified Gamesdata.GamesDB as G
 import Network.Curl
 import Control.Applicative
 import Control.Monad
@@ -113,6 +114,11 @@ removePlatformName gn | D.isInfixOf " (PS3)" gn = D.replace " (PS3)" "" gn
                       | D.isInfixOf " (Xbox 360 / PS3 / PC)" gn = D.replace " (Xbox 360 / PS3 / PC)" "" gn
                       | otherwise = gn
 
+fixImages :: Game -> IO Game
+fixImages game = do
+  imageURL <- G.getUrl (D.unpack $ name' game) (D.unpack $ platform' game)
+  if imageURL == "" then return game
+  else return $ Game (name' game) (price' game) (platform' game) (productUrl' game) (D.pack imageURL)
 
 
 createSpaceQuery :: [String] -> String
@@ -120,11 +126,15 @@ createSpaceQuery platform | length platform == 1 = head platform
                              | otherwise            = take (length resultString - 3) resultString
                              where resultString = foldr (\x y -> x ++ "%20" ++ y) [] platform
 
+handleEmptyResponse games name platform | isJust $ (games :: Maybe WalmartList) = fixList (return $ fromJust (games :: Maybe WalmartList)) (D.pack name) (D.pack platform)
+                                        | otherwise                             = return [] 
+
 getWalmart name platform = do
   query <- return $ createSpaceQuery (words name)
   response <- snd <$> curlGetString ("http://api.walmartlabs.com/v1/search?apiKey=cb6xua2avdqjj4ck26zry2jh&query=" ++ query) []
   let games = decode (fromString response)
-  fixList (return $ fromJust (games :: Maybe WalmartList)) (D.pack name) (D.pack platform)
+  -- fixList (return $ fromJust (games :: Maybe WalmartList)) (D.pack name) (D.pack platform)
+  handleEmptyResponse games name platform
   -- return $ fromJust (games :: Maybe WalmartList)
 
 main = do

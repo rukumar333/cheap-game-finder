@@ -9,6 +9,7 @@ import Database.SQLite.Simple
 import Data.Functor
 import Data.Functor.Identity
 import Data.List
+import qualified Data.Char as Ch
 import Data.Monoid
 import Control.Applicative
 import Web.Scotty
@@ -123,8 +124,12 @@ steamListToHtml (x:xs) = do
                               -- (liftIO $ print x) :: Html ()
                               steamListToHtml xs
 
+upperCaseWord :: String -> String
+upperCaseWord [] = ""
+upperCaseWord (x:xs) = (Ch.toUpper x) : (map Ch.toLower xs)
 
-
+upperCaseWords :: String -> String
+upperCaseWords listWords = unwords (map upperCaseWord (words listWords))
 
 -- main :: IO ()
 main = scotty 3000 $ do
@@ -175,63 +180,24 @@ main = scotty 3000 $ do
                                                                    option_ "Wii U"
                                                              input_ [type_ "text", class_ "form-control input-lg", placeholder_ "Ex: Skyrim", name_ "game"]
                                                              button_ [class_ "btn btn-primary btn-lg", type_ "submit"] "Search"
+                                        div_ [class_ "row"] $ do 
+                                              showPlatform gn gp
                                         div_ [class_ "row"] $ do
-                                              universalListToHtml universalList
-                                             -- div_ [class_ "col-xs-1 col-md-3"] $ do
-                                             --      div_ [class_ "ui-game thumbnail"] $ do
-                                             --           img_ [class_ "ui-game-cover img-responsive", src_ "http://upload.wikimedia.org/wikipedia/en/8/89/Dragon_Age_Origins_cover.png"]
-                                             --           div_ [class_ "caption"] $ do
-                                             --                h3_ (fromString gn)
-                                             --                div_ [class_ "website-price"] $ do
-                                             --                     a_ [href_ "#"] "Best Buy: "
-                                             --                     p_ "$60.00"
-                                             --                div_ [class_ "website-price"] $ do
-                                             --                     a_ [href_ "#"] "Walmart: "
-                                             --                     p_ "$60.00"
-
+                                              -- universalListToHtml universalList
+                                              populateResults gn gp universalList
                                         toHtmlRaw ("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js\"></script>" :: Text)
                                         toHtmlRaw ("<script src=\"bootstrap/js/bootstrap.min.js\"></script>" :: Text)
 
-    -- <div class="row">
-    --   <div id="wide-search-bar" class="text-center">
-    --     <div id="form-header">
-    --       <h1 id="form-header-text">Search for another game!</h1>
-    --     </div>
-    --     <form class="navbar-form" role="search" method="post" action="/search">
-    --       <div class="form-group">
-    --         <select class="form-control input-lg" name="platform">
-    --           <option>Platform</option>
-    --           <option>PS3</option>
-    --           <option>PS4</option>
-    --           <option>XBox 360</option>
-    --           <option>XBox One</option>
-    --           <option>Wii</option>
-    --           <option>Wii U</option>
-    --         </select>
-    --         <input type="text" class="form-control input-lg" placeholder="Ex: Skyrim" name="game">
-    --         <button type="button" class="btn btn-primary btn-lg" type="submit">Search</button>
-    --       </div>     
-    --     </form>
-    --   </div>
-    -- </div>
-    -- <div class="row">
-    --   <div class="col-xs-1 col-md-3">
-    --     <div class="ui-game thumbnail">
-    --       <img class="ui-game-cover img-responsive" src="http://upload.wikimedia.org/wikipedia/en/8/89/Dragon_Age_Origins_cover.png">
-    --       <div class="caption">
-    --         <h3>Dragon Age Origins</h3>
-    --         <div class="website-price">
-    --           <a href="#">Best Buy:</a>
-    --           <p>$60.00</p>
-    --         </div>
-    --         <div class="website-price">
-    --           <a href="#">Wal Mart:</a>
-    --           <p>$50.00</p>
-    --         </div>
-    --       </div>
-    --     </div>
-    --   </div>
-    -- </div>
-
-         
-                  
+                           where populateResults :: String -> String -> [UniversalGame] -> Html ()
+                                 populateResults game platform results | platform == "Platform" = div_ [id_ "wide-search-bar", class_ "text-center"] $ do
+                                                                                                      div_ [id_ "form-header"] $ do
+                                                                                                          h1_ [id_ "form-header-text"] "Please select a platform." 
+                                                                       | null results           = div_ [id_ "wide-search-bar", class_ "text-center"] $ do
+                                                                                                      div_ [id_ "form-header"] $ do
+                                                                                                          h1_ [id_ "form-header-text"] "No games found. Please search for another game."
+                                                                       | otherwise              = universalListToHtml results
+                                 showPlatform :: String -> String -> Html ()
+                                 showPlatform game platform | platform == "Platform" = div_ ""
+                                                            | otherwise              = div_ [id_ "wide-search-bar", class_ "text-center"] $ do
+                                                                                           div_ [id_ "form-header"] $ do
+                                                                                               h2_ [id_ "form-header-text"] $ fromString $ ("Showing results for " ++ (upperCaseWords game) ++ " (" ++ platform ++ ").")
